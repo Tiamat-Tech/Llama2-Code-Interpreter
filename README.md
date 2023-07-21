@@ -9,11 +9,11 @@ This project allows LLM to generate code, execute it, receive feedback, debug, a
 
 ## 🌟 Key Features
 
-- 🚀 Generation and Execution of Code: Tailor-made codes spun into existence and executed smoothly. 
-- 🔎 Interactive Debugging & Feedback: Real-time engagement in debugging, accompanied by constructive feedback for an improved coding experience. 
-- 🧠 Dynamic Q&A System: A revolutionary question-answering mechanism powered by cutting-edge code generation, execution, real-time feedback, and interactive debugging.
-- 🤖 Seamless Integration with GPT-4: Smooth interactivity with the advanced GPT-4 AI model for superior user experience.
-- 🌐 Internet Access Support: Comprehensive functionality, powered by full support for internet access. Make the world wide web your sandbox!
+- 🚀 **Generation and Execution of Code** : Tailor-made codes spun into existence and executed smoothly. 
+- 🔎 **Interactive Debugging & Feedback** : Real-time engagement in debugging, accompanied by constructive feedback for an improved coding experience. 
+- 🧠 **Dynamic Q&A System** : A revolutionary question-answering mechanism powered by cutting-edge code generation, execution, real-time feedback, and interactive debugging.
+- 🤖 **Seamless Integration with GPT-4** : Smooth interactivity with the advanced GPT-4 AI model for superior user experience.
+- 🌐 **Internet Access Support** : Comprehensive functionality, powered by full support for internet access. Make the world wide web your sandbox!
 
 
 ## Installation
