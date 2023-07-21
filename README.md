@@ -54,7 +54,13 @@ Distributed under the MIT License. See `LICENSE` for more information.
 
 Seungyoun, Shin - 2022021568@korea.ac.kr
 
+## Acknowledgement
 
-Project Link: [https://github.com/yourusername/llama2](https://github.com/yourusername/llama2)
+Here are some relevant and related projects that have contributed to the development of this work:
+
+1. **llama2** : [GitHub Repository](https://github.com/facebookresearch/llama)
+2. **yet-another-gpt-tutorial** : [GitHub Repository](https://github.com/sjchoi86/yet-another-gpt-tutorial/tree/main)
+
+These projects have been instrumental in providing valuable insights and resources, and their contributions are highly appreciated.
 
 ---
