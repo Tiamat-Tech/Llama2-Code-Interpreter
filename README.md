@@ -1,5 +1,5 @@
 <p align="center" width="100%">
-<img src="llama_code_interpreter/assets/logo2.png" alt="llama2 code interprerter icon" style="width: 200px; height:200px; display: block; margin: auto; border-radius: 50%;">
+<img src="/assets/logo2.png" alt="llama2 code interprerter icon" style="width: 200px; height:200px; display: block; margin: auto; border-radius: 50%;">
 </p>
 
 
