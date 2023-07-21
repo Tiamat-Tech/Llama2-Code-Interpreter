@@ -18,6 +18,24 @@ DEFAULT_EOS_TOKEN = "</s>"
 DEFAULT_BOS_TOKEN = "<s>"
 DEFAULT_UNK_TOKEN = "<unk>"
 
+IMPORT_PKG = """
+import numpy as np
+import pandas as pd 
+import matplotlib.pyplot as plt
+import seaborn as sns
+from scipy import stats
+import os,sys
+import re
+from datetime import datetime
+from sympy import symbols, Eq, solve
+import torch 
+import requests
+from bs4 import BeautifulSoup
+import json
+import math
+import yfinance
+"""
+
 CODE_INTERPRETER_SYSTEM_PROMPT = """
 You are helpful agent that can code 
 
@@ -79,20 +97,9 @@ Here is the chart of the bitcoin close YTD chart.</s>
 """
 
 
-IMPORT_PKG = """
-import numpy as np
-import pandas as pd 
-import matplotlib.pyplot as plt
-import seaborn as sns
-from scipy import stats
-import os,sys
-import re
-from datetime import datetime
-from sympy import symbols, Eq, solve
-import torch 
-import requests
-from bs4 import BeautifulSoup
-import json
-import math
-import yfinance
+CODE_INTERPRETER_SYSTEM_PROMPT_GPT4 = f"""
+You are helpful agent that can code 
+
+You are avaible to use
+{IMPORT_PKG}
 """

@@ -30,7 +30,7 @@ class GPTCodeInterpreter(BaseCodeInterpreter):
         
         self.model = model
         self.dialog = [
-            {"role": "system", "content": CODE_INTERPRETER_SYSTEM_PROMPT,},
+            {"role": "system", "content": CODE_INTERPRETER_SYSTEM_PROMPT_GPT4},
             #{"role": "user", "content": "How can I use BeautifulSoup to scrape a website and extract all the URLs on a page?"},
             #{"role": "assistant", "content": "I think I need to use beatifulsoup to find current korean president,"}
         ]

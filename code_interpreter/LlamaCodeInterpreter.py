@@ -148,7 +148,9 @@ class LlamaCodeInterpreter(BaseCodeInterpreter):
                     print(Fore.GREEN + text_before_first_code_block + Style.RESET_ALL)
                 if VERBOSE:
                     print(Fore.YELLOW + generated_code_blocks[0]+ '\n```\n' + Style.RESET_ALL)
-                code_block_output, img_data = self.execute_code_and_return_output(generated_code_blocks[0])
+                code_block_output, error_msg, img_data = self.execute_code_and_return_output(generated_code_blocks[0])
+
+                code_block_output = f'{code_block_output}{error_msg}'
 
                 if code_block_output is not None:
                     code_block_output = code_block_output.strip()
