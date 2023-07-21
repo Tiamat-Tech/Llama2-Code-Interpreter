@@ -1,23 +1,12 @@
-import json
-import os
-import sys
-import time
-import re 
-from pathlib import Path
+from code_interpreter.BaseCodeInterpreter import BaseCodeInterpreter
+from utils.const import *
+
 from typing import List, Literal, Optional, Tuple, TypedDict, Dict
+from colorama import init, Fore, Style
 
 import torch
 import transformers
 from transformers import LlamaForCausalLM, LlamaTokenizer
-
-import nbformat
-from nbconvert.preprocessors import ExecutePreprocessor
-from nbconvert.preprocessors.execute import CellExecutionError
-
-from utils.const import *
-from colorama import init, Fore, Style
-from rich.markdown import Markdown
-
 
 def smart_tokenizer_and_embedding_resize(
     special_tokens_dict: Dict,
@@ -41,10 +30,11 @@ def smart_tokenizer_and_embedding_resize(
         input_embeddings[-num_new_tokens:] = input_embeddings_avg
         output_embeddings[-num_new_tokens:] = output_embeddings_avg
 
-class LlamaCodeInterpreter:
+class LlamaCodeInterpreter(BaseCodeInterpreter):
 
-    def __init__(self, model_path: str):
-        self.model = LlamaForCausalLM.from_pretrained(model_path, device_map="auto", torch_dtype=torch.float16)
+    def __init__(self, model_path: str, load_in_8bit : bool = False, load_in_4bit : bool = False):
+        self.model = LlamaForCausalLM.from_pretrained(model_path, device_map="auto", load_in_4bit = load_in_4bit,
+                                                      load_in_8bit=load_in_8bit, torch_dtype=torch.float16)
         self.tokenizer = LlamaTokenizer.from_pretrained(model_path)
 
         # Add special token
@@ -119,61 +109,6 @@ class LlamaCodeInterpreter:
 
         return torch.tensor(dialog_tokens).unsqueeze(0)
 
-    @staticmethod
-    def extract_code_blocks(text : str):
-        pattern = r'```(?:python\n)?(.*?)```' # Match optional 'python\n' but don't capture it
-        code_blocks = re.findall(pattern, text, re.DOTALL)
-        return [block.strip() for block in code_blocks]
-
-    @staticmethod
-    def parse_last_answer(text: str) -> str:
-        return text.split(E_INST)[-1]
-
-    @staticmethod
-    def execute_code_and_return_output(code_str: str) -> str:
-        # Create a new notebook
-        nb = nbformat.v4.new_notebook()
-
-        # Add a cell with your code
-        code_cell = nbformat.v4.new_code_cell(source=f'{IMPORT_PKG}\n{code_str}')
-        nb.cells.append(code_cell)
-        
-        # Execute the notebook
-        ep = ExecutePreprocessor(timeout=600, kernel_name='python3')
-        output_str, error_str = None, None
-        try:
-            ep.preprocess(nb)
-            if nb.cells[0].outputs:  # Check if there are any outputs
-                output = nb.cells[0].outputs[0]
-
-                if 'text' in list(output.keys()):
-                    output_str = output['text']
-                else:
-                    output_str = output['data']['text/plain']
-                
-        except CellExecutionError as e:
-            error_str = e
-
-        if error_str is not None:
-            # Get the traceback, which is a list of strings, and join them into one string
-            filtered_error_msg = error_str.__str__().split('An error occurred while executing the following cell')[-1].split("\n------------------\n")[-1]
-            raw_error_msg = "".join(filtered_error_msg)
-            
-            # Remove escape sequences for colored text
-            #print(raw_error_msg)
-            error_msg = raw_error_msg.replace("\x1b[0m", "").replace("\x1b[0;31m", "").replace("\x1b[0;32m", "").replace("\x1b[1;32m", "").replace("\x1b[38;5;241m", "").replace("\x1b[38;5;28;01m", "").replace("\x1b[38;5;21m", "").replace("\x1b[38;5;28m", "").replace("\x1b[43m", "").replace("\x1b[49m", "").replace("\x1b[38;5;241;43m", "").replace("\x1b[39;49m", "").replace("\x1b[0;36m", "")
-            error_lines = error_msg.split("\n")
-            
-            # Only keep the lines up to (and including) the first line that contains 'Error' followed by a ':'
-            error_lines = error_lines[:next(i for i, line in enumerate(error_lines) if 'Error:' in line) + 1]
-
-            # Join the lines back into a single string
-            error_msg = "\n".join(error_lines)
-            
-            return error_msg
-        else:
-            return output_str
-
     def hard_coded_eos_splitter(self):
         self.dialog[-1]['content'] = self.dialog[-1]['content'].split(DEFAULT_EOS_TOKEN)[0]
 
@@ -182,6 +117,7 @@ class LlamaCodeInterpreter:
 
         code_block_output = ""
         attempt = 0 
+        img_data = None
 
         if VERBOSE:
             print('###User : ' + Fore.BLUE + Style.BRIGHT + user_message + Style.RESET_ALL)
@@ -211,8 +147,8 @@ class LlamaCodeInterpreter:
                 if VERBOSE:
                     print(Fore.GREEN + text_before_first_code_block + Style.RESET_ALL)
                 if VERBOSE:
-                    print(Fore.YELLOW + generated_code_blocks[0]+ '\n```' + Style.RESET_ALL)
-                code_block_output = self.execute_code_and_return_output(generated_code_blocks[0])
+                    print(Fore.YELLOW + generated_code_blocks[0]+ '\n```\n' + Style.RESET_ALL)
+                code_block_output, img_data = self.execute_code_and_return_output(generated_code_blocks[0])
 
                 if code_block_output is not None:
                     code_block_output = code_block_output.strip()
@@ -237,34 +173,20 @@ class LlamaCodeInterpreter:
                 if VERBOSE:
                     print(Fore.GREEN + generated_text + Style.RESET_ALL)
                 break
+
+            # early stop 
+            if DEFAULT_EOS_TOKEN in self.dialog[-1]['content']:
+                self.hard_coded_eos_splitter()
+                if img_data is not None:
+                    return f'{self.dialog[-1]}\n![plot](data:image/png;base64,{img_data})'
+                return self.dialog[-1]
+            
             self.hard_coded_eos_splitter()
+
             attempt += 1
             #print(f"====Attempt[{attempt}]====\n{self.dialog[-1]['content']}")
 
         #print(self.dialog)
+        if img_data is not None:
+            return f'{self.dialog[-1]}\n![plot](data:image/png;base64,{img_data})'
         return self.dialog[-1]
-
-
-if __name__=="__main__":
-
-    model_path = "./ckpt/llama-2-13b-chat"
-    interpreter = LlamaCodeInterpreter(model_path = model_path)
-
-    dialog = [
-        {"role": "system", "content": CODE_INTERPRETER_SYSTEM_PROMPT,},
-        {"role": "user", "content": "How can I use BeautifulSoup to scrape a website and extract all the URLs on a page?"},
-        #{"role": "assistant", "content": "I think I need to use beatifulsoup to find current korean president,"}
-    ]
-
-    #output = interpreter.chat(user_message='How can I use BeautifulSoup to scrape a website and extract all the URLs on a page?',
-    #                          VERBOSE=True)
-    #$print('--OUT--')
-    #print(output['content'])
-
-    while True:
-        user_msg = str(input('> '))
-        if user_msg=='q':
-            break
-        output = interpreter.chat(user_message=user_msg,
-                              VERBOSE=True)
-        
