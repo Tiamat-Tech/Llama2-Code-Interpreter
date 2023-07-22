@@ -24,7 +24,7 @@ This project allows LLM to generate code, execute it, receive feedback, debug, a
 ***Llama2 in Action***
 
 <p align="center" width="100%">
-<img src="/assets/president_code.png" alt="example1_president_search_with_code" style="width: 300px; height:300px; display: block; margin: auto; border-radius: 50%;">
+<img src="/assets/president_code.png" alt="example1_president_search_with_code" style="width: 300px; display: block; margin: auto; border-radius: 50%;">
 </p>
 
 </div>
