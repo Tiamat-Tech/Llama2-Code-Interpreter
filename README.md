@@ -12,8 +12,28 @@ This project allows LLM to generate code, execute it, receive feedback, debug, a
 - 🚀 **Generation and Execution of Code** : Tailor-made codes spun into existence and executed smoothly. 
 - 🔎 **Interactive Debugging & Feedback** : Real-time engagement in debugging, accompanied by constructive feedback for an improved coding experience. 
 - 🧠 **Dynamic Q&A System** : A revolutionary question-answering mechanism powered by cutting-edge code generation, execution, real-time feedback, and interactive debugging.
-- 🤖 **Seamless Integration with GPT-4** : Smooth interactivity with the advanced GPT-4 AI model for superior user experience.
 - 🌐 **Internet Access Support** : Comprehensive functionality, powered by full support for internet access. Make the world wide web your sandbox!
+
+## Examples
+
+
+
+---
+<div align="center">
+
+***Llama2 in Action***
+
+<p align="center" width="100%">
+<img src="/assets/president_code.png" alt="example1_president_search_with_code" style="width: 300px; height:300px; display: block; margin: auto; border-radius: 50%;">
+</p>
+
+</div>
+
+In response to the query, <span style="color:blue">"Who is the current president of South Korea?"</span>, Llama2 generates Python code for web scraping. This code targets the official website of the **South Korean government**, specifically extracting information from the exact URL.
+
+
+The script retrieves the HTML title tag which contains the current president's name. The output, <span style="color:green">`'대한민국 대통령 > 윤석열 대통령 > 취임사'`</span>, allows Llama2 to discern that the incumbent president is <span style="color:red">윤석열 (Yoon Suk-yeol)</span>.
+
 
 
 ## Installation

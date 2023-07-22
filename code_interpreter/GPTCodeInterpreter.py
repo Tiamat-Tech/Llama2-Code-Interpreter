@@ -123,8 +123,8 @@ class GPTCodeInterpreter(BaseCodeInterpreter):
 
 
 if __name__=="__main__":
-
-    interpreter = GPTCodeInterpreter()
+    import random
+    
 
     dialog = [
         {"role": "system", "content": CODE_INTERPRETER_SYSTEM_PROMPT,},
@@ -137,10 +137,18 @@ if __name__=="__main__":
     #$print('--OUT--')
     #print(output['content'])
 
-    while True:
-        user_msg = str(input('> '))
-        if user_msg=='q':
-            break
-        output = interpreter.chat(user_message=user_msg,
+    interpreter = GPTCodeInterpreter()
+    
+    for i in range(100):
+        output = interpreter.chat(user_message=random.choice(['who is current korean president?','tell me the current south korea president']),
                               VERBOSE=True)
+        if 'yoon' in output.lower():
+            break
+        if '윤석열' in output.lower():
+            break 
+        if 'seok-yeol' in output.lower():
+            break 
+        if 'yeol' in output.lower():
+            break 
+    del interpreter
         

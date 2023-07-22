@@ -1,3 +1,6 @@
+import sys 
+
+sys.path.append('/home/seungyoun/llama_code_interpreter')
 from code_interpreter.BaseCodeInterpreter import BaseCodeInterpreter
 from utils.const import *
 
@@ -55,7 +58,7 @@ class LlamaCodeInterpreter(BaseCodeInterpreter):
         )
 
         self.dialog = [
-            {"role": "system", "content": CODE_INTERPRETER_SYSTEM_PROMPT,},
+            {"role": "system", "content": CODE_INTERPRETER_SYSTEM_PROMPT_PRESIDENT,},
             #{"role": "user", "content": "How can I use BeautifulSoup to scrape a website and extract all the URLs on a page?"},
             #{"role": "assistant", "content": "I think I need to use beatifulsoup to find current korean president,"}
         ]
@@ -192,3 +195,22 @@ class LlamaCodeInterpreter(BaseCodeInterpreter):
         if img_data is not None:
             return f'{self.dialog[-1]}\n![plot](data:image/png;base64,{img_data})'
         return self.dialog[-1]
+
+if __name__=="__main__":
+    import random
+    
+    LLAMA2_MODEL_PATH = "./ckpt/llama-2-13b-chat"
+    
+    for i in range(100):
+        interpreter = LlamaCodeInterpreter(model_path=LLAMA2_MODEL_PATH, load_in_8bit=True)
+        output = interpreter.chat(user_message=random.choice(['who is current korean president? use web scrapping tool to answer','tell me the current south korea president use web scrapping tool to answer']),
+                              VERBOSE=True)['content']
+        if 'yoon' in output.lower():
+            break
+        if '윤석열' in output.lower():
+            break 
+        if 'seok-yeol' in output.lower():
+            break 
+        if 'yeol' in output.lower():
+            break 
+        del interpreter
