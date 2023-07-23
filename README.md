@@ -24,7 +24,7 @@ This project allows LLM to generate code, execute it, receive feedback, debug, a
 ***Llama2 in Action***
 
 <p align="center" width="100%">
-<img src="/assets/president_code.png" alt="example1_president_search_with_code" style="width: 600px; display: block; margin: auto; border-radius: 50%;">
+<img src="/assets/president_code.gif" alt="example1_president_search_with_code" style="width: 600px; display: block; margin: auto; border-radius: 50%;">
 </p>
 
 </div>
@@ -58,7 +58,7 @@ pip install -r requirements.txt
 To start interacting with Llama2 via the Gradio UI:
 
 ```bash
-python3 chatbot.py
+python3 chatbot.py --mode_path <your-model-path>
 ```
 
 Then, open your web browser and navigate to the URL displayed in the console.

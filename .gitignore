@@ -19,3 +19,5 @@ gpt4_custom_code_interpreter/rilab_key.txt
 openai_api_key.txt
 
 gpt4_custom_code_interpreter/
+tmp/
+gpt_data_gen/

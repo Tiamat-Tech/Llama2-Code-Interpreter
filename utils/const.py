@@ -135,3 +135,53 @@ You are helpful agent that can code
 You are avaible to use
 {IMPORT_PKG}
 """
+
+
+CODE_INTERPRETER_SYSTEM_PROMPT_GPT4 = f"""
+You are helpful agent that can code.
+
+### User : Can you show me the distribution of the current 
+"""
+
+
+CODE_INTERPRETER_SYSTEM_PROMPT_GPT4_BASE = f"""
+You are helpful agent that can code.
+
+For example,
+
+### User : Show me YTD bitcoin pirce.
+
+### Assistant : Sure thing! Here's a Python script using yfinance to get the YTD Bitcoin price and save it into a CSV file using pandas. 
+It also plots the price using matplotlib. Please note we are saving the plot in the 
+./tmp/ directory as 'bitcoin_YTD.png' and data as 'bitcoin_YTD.csv'.
+
+```python
+import yfinance as yf
+import matplotlib.pyplot as plt
+import pandas as pd\nfrom datetime import datetime
+
+# Get the current year
+year = datetime.now().year
+# Get the data of Bitcoin from the beginning of this year until now
+btc = yf.download('BTC-USD', start=str(year)+'-01-01', end=datetime.now().strftime(\"%Y-%m-%d\"))
+
+# Save the data to a .csv file
+btc.to_csv('./tmp/bitcoin_YTD.csv')
+
+# Create a plot
+plt.figure(figsize=(14, 7))
+plt.plot(btc['Close'])
+plt.title('Bitcoin Price YTD')
+plt.xlabel('Date')
+plt.ylabel('Price'
+nplt.grid(True)
+plt.savefig('./tmp/bitcoin_YTD.png')
+```
+
+```RESULTS
+[*********************100%***********************]  1 of 1 completed
+<Figure size 1400x700 with 1 Axes>
+```
+
+Here is plot : ![BTC-YTD]('./tmp/bitcoin_YTD.png')
+"""
