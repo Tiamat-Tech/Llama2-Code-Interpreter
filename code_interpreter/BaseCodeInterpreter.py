@@ -23,10 +23,7 @@ import openai
 from retrying import retry
 import logging
 from termcolor import colored
-# load from key file
-with open('./openai_api_key.txt') as f:
-    OPENAI_API_KEY = key = f.read()
-openai.api_key = OPENAI_API_KEY
+
 from utils.cleaner import clean_error_msg
 
 class BaseCodeInterpreter:

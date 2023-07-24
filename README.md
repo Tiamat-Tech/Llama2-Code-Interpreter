@@ -7,6 +7,8 @@
 
 This project allows LLM to generate code, execute it, receive feedback, debug, and answer questions based on the whole process. It is designed to be intuitive and versatile, capable of dealing with multiple languages and frameworks.
 
+[The purpose and direction of the project](https://github.com/SeungyounShin/Llama2-Code-Interpreter/wiki)
+
 ## 🌟 Key Features
 
 - 🚀 **Generation and Execution of Code** : Tailor-made codes spun into existence and executed smoothly. 

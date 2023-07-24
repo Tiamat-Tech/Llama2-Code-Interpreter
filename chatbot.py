@@ -11,8 +11,8 @@ LLAMA2_MODEL_PATH = "./ckpt/llama-2-13b-chat"
 
 def load_model(model_path):
     print('++ Loading Model')
-    #return LlamaCodeInterpreter(model_path, load_in_4bit=True)
-    return GPTCodeInterpreter()
+    return LlamaCodeInterpreter(model_path, load_in_4bit=True)
+    #return GPTCodeInterpreter()
 
 def main(model_path):
     # Create an instance of your custom interpreter
