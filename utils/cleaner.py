@@ -7,7 +7,7 @@ def get_error_header(traceback_str):
     for line in lines:
         if 'Error:' in line:
             return line
-    return None  # Return None if no error message is found
+    return ''  # Return None if no error message is found
 
 def clean_error_msg(error_str:str =''):
     filtered_error_msg = error_str.__str__().split('An error occurred while executing the following cell')[-1].split("\n------------------\n")[-1]

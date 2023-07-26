@@ -70,6 +70,15 @@ class GPTCodeInterpreter(BaseCodeInterpreter):
             return None
 
     @retry(stop_max_attempt_number=7, wait_exponential_multiplier=1000, wait_exponential_max=10000)
+    def ChatCompletion(self):
+        try:
+            self.response = openai.ChatCompletion.create(
+                model=self.model,
+                messages=self.dialog
+            )
+        except Exception as e:
+            print(f'error while OPENAI api call {e}')
+
     def chat(self, user_message: str, VERBOSE :bool = False):
         self.dialog.append({"role": "user", "content": user_message})
 
@@ -84,14 +93,7 @@ class GPTCodeInterpreter(BaseCodeInterpreter):
             if attempt > 3:
                 break
 
-            try:
-                self.response = openai.ChatCompletion.create(
-                    model=self.model,
-                    messages=self.dialog
-                )
-            except Exception as e:
-                print(f'error while OPENAI api call {e}')
-                return None
+            self.ChatCompletion()
 
             generated_text = self.get_response_content()
             generated_code_blocks = self.extract_code_blocks(generated_text)
