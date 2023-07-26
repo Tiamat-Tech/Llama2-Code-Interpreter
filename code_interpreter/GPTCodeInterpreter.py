@@ -6,7 +6,11 @@ import re
 from pathlib import Path
 from typing import List, Literal, Optional, Tuple, TypedDict, Dict
 
-sys.path.append('/home/seungyoun/llama_code_interpreter')
+# Get the path from environment variable
+llama_ci_path = os.environ.get('LLAMA_CI_PATH')
+assert llama_ci_path is not None, "LLAMA_CI_PATH environment variable not set."
+sys.path.append(llama_ci_path)
+from code_interpreter.JuypyterClient import JupyterNotebook
 from code_interpreter.BaseCodeInterpreter import BaseCodeInterpreter
 from utils.const import *
 from colorama import init, Fore, Style
@@ -24,7 +28,7 @@ with open('./openai_api_key.txt') as f:
 openai.api_key = OPENAI_API_KEY
 from utils.cleaner import clean_error_msg
 
-def save_dialog(dialog, base_path:str = '/home/seungyoun/llama_code_interpreter/gpt_data_gen'):
+def save_dialog(dialog, base_path:str = f'{llama_ci_path}/gpt_data_gen'):
     file_number = 0
     while True:
         # Construct the path
@@ -48,7 +52,7 @@ class GPTCodeInterpreter(BaseCodeInterpreter):
         
         self.model = model
         self.dialog = [
-            {"role": "system", "content":  CODE_INTERPRETER_SYSTEM_PROMPT_PRESIDENT},
+            {"role": "system", "content":  CODE_INTERPRETER_SYSTEM_PROMPT},
             #{"role": "user", "content": "How can I use BeautifulSoup to scrape a website and extract all the URLs on a page?"},
             #{"role": "assistant", "content": "I think I need to use beatifulsoup to find current korean president,"}
         ]
@@ -56,11 +60,13 @@ class GPTCodeInterpreter(BaseCodeInterpreter):
         self.response = None
 
         assert os.path.isfile('./openai_api_key.txt'), "The openai_api_key.txt file could not be found. Please make sure it is in the same directory as this script, and that it contains your OpenAI API key."
-
+        
         # load from key file
         with open('./openai_api_key.txt') as f:
-            OPENAI_API_KEY = key = f.read()
+            OPENAI_API_KEY = f.read()
         openai.api_key = OPENAI_API_KEY
+
+        self.nb = JupyterNotebook()
 
     def get_response_content(self):
         if self.response:
@@ -106,9 +112,9 @@ class GPTCodeInterpreter(BaseCodeInterpreter):
                     print(Fore.GREEN + text_before_first_code_block + Style.RESET_ALL)
                 if VERBOSE:
                     print(Fore.YELLOW + generated_code_blocks[0]+ '\n```\n' + Style.RESET_ALL)
-                code_block_output, error_msg, img_data = self.execute_code_and_return_output(generated_code_blocks[0])
+                code_block_output, error_flag = self.execute_code_and_return_output(generated_code_blocks[0])
 
-                code_block_output = f'{code_block_output}{error_msg}'
+                code_block_output = f'{code_block_output}'
 
                 if code_block_output is not None:
                     code_block_output = code_block_output.strip()
@@ -125,8 +131,9 @@ class GPTCodeInterpreter(BaseCodeInterpreter):
                 elif self.dialog[-1]['role'] == 'assistant':
                     self.dialog[-1]['content'] += gen_final
                 
-                if len(error_msg) <1:
-                    attempt = max(attempt,2)
+                if not error_flag:
+                    #attempt = max(attempt,2)
+                    break
                     #return self.dialog[-1]
             else:
                 if self.dialog[-1]['role'] == 'user':
@@ -161,7 +168,7 @@ if __name__=="__main__":
     #                          VERBOSE=True)
     #$print('--OUT--')
     #print(output['content'])
-    question = 'Can you create a simple graph with five nodes and seven edges using NetworkX?'
+    question = ''
 
     interpreter = GPTCodeInterpreter()
     

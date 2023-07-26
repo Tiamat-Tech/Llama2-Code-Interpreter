@@ -55,7 +55,19 @@ cd Llama2-Code-Interpreter.git
 pip install -r requirements.txt
 ```
 
-## Usage
+I see, you want to include the part about setting the `LLAMA_CI_PATH` environment variable in the setup instructions. Here's how you might write it:
+
+### Setup
+
+**Set the `LLAMA_CI_PATH` environment variable:** This script requires the `LLAMA_CI_PATH` environment variable to be set to the directory that contains the relevant code. You can set it to the current directory like this:
+
+```bash
+export LLAMA_CI_PATH=$(pwd)
+```
+
+Please note that this setting is only valid for the current shell session. If you want to make it permanent, you can add it to your shell's startup file (like `.bashrc` or `.bash_profile`).
+
+### Run App
 
 To start interacting with Llama2 via the Gradio UI:
 
@@ -63,11 +75,13 @@ To start interacting with Llama2 via the Gradio UI:
 python3 chatbot.py --mode_path <your-model-path>
 ```
 
-Then, open your web browser and navigate to the URL displayed in the console.
+Replace `<your-model-path>` with the path to the model file you want to use. (Usally I recommend you to use chat-type model e.g. `meta-llama/Llama-2-13b-chat`)
+
+Please let me know if you need help with a specific part of this setup process.
 
 ## Contributions
 
-Contributions, issues, and feature requests are welcome! Feel free to check [issues page](url_to_your_issues_page). 
+Contributions, issues, and feature requests are welcome! Feel free to check [issues page](https://github.com/SeungyounShin/Llama2-Code-Interpreter/issues). 
 
 ## License
 

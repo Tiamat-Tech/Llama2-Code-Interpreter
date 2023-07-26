@@ -1,6 +1,11 @@
 import sys 
+import os
 
-sys.path.append('/home/seungyoun/llama_code_interpreter')
+llama_ci_path = os.environ.get('LLAMA_CI_PATH')
+assert llama_ci_path is not None, "LLAMA_CI_PATH environment variable not set."
+sys.path.append(llama_ci_path)
+
+from code_interpreter.JuypyterClient import JupyterNotebook
 from code_interpreter.BaseCodeInterpreter import BaseCodeInterpreter
 from utils.const import *
 
@@ -10,6 +15,8 @@ from colorama import init, Fore, Style
 import torch
 import transformers
 from transformers import LlamaForCausalLM, LlamaTokenizer
+
+
 
 def smart_tokenizer_and_embedding_resize(
     special_tokens_dict: Dict,
@@ -58,10 +65,12 @@ class LlamaCodeInterpreter(BaseCodeInterpreter):
         )
 
         self.dialog = [
-            {"role": "system", "content": CODE_INTERPRETER_SYSTEM_PROMPT_PRESIDENT,},
+            {"role": "system", "content": CODE_INTERPRETER_SYSTEM_PROMPT + "\nUse code to answer",},
             #{"role": "user", "content": "How can I use BeautifulSoup to scrape a website and extract all the URLs on a page?"},
             #{"role": "assistant", "content": "I think I need to use beatifulsoup to find current korean president,"}
         ]
+
+        self.nb = JupyterNotebook()
 
     def dialog_to_prompt(self, dialog: List[Dialog], SYS_PROMPT: str = '') -> torch.Tensor:
     
@@ -151,9 +160,9 @@ class LlamaCodeInterpreter(BaseCodeInterpreter):
                     print(Fore.GREEN + text_before_first_code_block + Style.RESET_ALL)
                 if VERBOSE:
                     print(Fore.YELLOW + generated_code_blocks[0]+ '\n```\n' + Style.RESET_ALL)
-                code_block_output, error_msg, img_data = self.execute_code_and_return_output(generated_code_blocks[0])
+                code_block_output, error_flag = self.execute_code_and_return_output(generated_code_blocks[0])
 
-                code_block_output = f'{code_block_output}{error_msg}'
+                code_block_output = f'{code_block_output}'
 
                 if code_block_output is not None:
                     code_block_output = code_block_output.strip()
@@ -201,16 +210,16 @@ if __name__=="__main__":
     
     LLAMA2_MODEL_PATH = "./ckpt/llama-2-13b-chat"
     
-    for i in range(100):
-        interpreter = LlamaCodeInterpreter(model_path=LLAMA2_MODEL_PATH, load_in_8bit=True)
-        output = interpreter.chat(user_message=random.choice(['who is current korean president? use web scrapping tool to answer','tell me the current south korea president use web scrapping tool to answer']),
-                              VERBOSE=True)['content']
-        if 'yoon' in output.lower():
+    interpreter = LlamaCodeInterpreter(model_path=LLAMA2_MODEL_PATH, load_in_8bit=True)
+    output = interpreter.chat(user_message=random.choice(['who is current korean president?','what is sin(20)?']),
+                              VERBOSE=True)
+
+    while True:
+        input_char = input("Press 'q' to quit the dialog: ")
+        if input_char.lower() == 'q':
             break
-        if '윤석열' in output.lower():
-            break 
-        if 'seok-yeol' in output.lower():
-            break 
-        if 'yeol' in output.lower():
-            break 
-        del interpreter
+            
+        else:
+            output = interpreter.chat(user_message=input_char,
+                              VERBOSE=True)
+        
